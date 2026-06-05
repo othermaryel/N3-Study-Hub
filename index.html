@@ -162,12 +162,12 @@ const docs = [
     .ll-stats{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#9a8e7c;
       margin-bottom:.9rem;display:flex;gap:1.2rem;flex-wrap:wrap;}
     .ll-stats b{color:#5a4e3c;font-weight:500;}
-    .ll-ep{display:flex;gap:.8rem;padding:.65rem .2rem;border-bottom:1px solid #d8ccb4;align-items:flex-start;}
+    .ll-ep{display:flex;gap:.8rem;padding:.65rem .2rem;border-bottom:1px solid #d8ccb4;align-items:center;}
     .ll-ep:last-child{border-bottom:none;}
     .ll-ep.heard{opacity:.55;}
     .ll-ep.heard .ll-title{text-decoration:line-through;text-decoration-color:#9a8e7c;}
-    .ll-chk{margin-top:.18rem;}
-    .ll-chk input{width:17px;height:17px;accent-color:#8b1a1a;cursor:pointer;}
+    .ll-chk{display:flex;align-items:center;align-self:stretch;}
+    .ll-chk input{width:21px;height:21px;accent-color:#8b1a1a;cursor:pointer;}
     .ll-main{flex:1;min-width:0;}
     .ll-title{font-family:'Noto Serif JP',serif;font-size:15px;color:#1a1209;display:flex;
       align-items:center;gap:.5rem;flex-wrap:wrap;}
@@ -204,7 +204,7 @@ const docs = [
   body: `
     <div class="container">
       <header>
-        <h1>聴く Listening Log</h1>
+        <h1>聞く Listening Log</h1>
         <div class="sub">Podcast episodes for listening practice — search, track &amp; tag. Fetched live from each show's RSS feed.</div>
       </header>
       <div class="ll-controls">
@@ -253,7 +253,7 @@ const docs = [
     function load(k,fb){try{var v=JSON.parse(localStorage.getItem(k));return v==null?fb:v;}catch(e){return fb;}}
     function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
     function esc(s){return (s||"").replace(/[&<>\"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}
-    function guessLevel(d){if(!d)return "";if(d.indexOf("🚲")>-1)return "N4-";if(d.indexOf("🚃")>-1)return "N3";if(d.indexOf("🚀")>-1)return "N2+";return "";}
+    function guessLevel(d){if(!d)return "";if(d.indexOf("🚲")>-1)return "N4";if(d.indexOf("🚃")>-1)return "N3";if(d.indexOf("🚀")>-1)return "N2";return "";}
 
     function parseFeed(xml,feed){
       var doc=new DOMParser().parseFromString(xml,"text/xml");
@@ -265,7 +265,7 @@ const docs = [
         var link=""; var ln=it.querySelector("link"); if(ln)link=(ln.textContent||"").trim();
         var enc=it.querySelector("enclosure"); if(!link&&enc)link=enc.getAttribute("url")||"";
         return {guid:guid,title:title,show:feed.id,cls:feed.cls,date:get("pubDate"),
-                ts:Date.parse(get("pubDate"))||0,suggestedLevel:guessLevel(desc),link:link};
+                ts:Date.parse(get("pubDate"))||0,suggestedLevel:guessLevel(title),link:link};
       });
     }
     function fetchFeed(feed){
@@ -308,16 +308,16 @@ const docs = [
     function rowHTML(e){
       var u=userState[e.guid]||{}; var lvl=u.level||e.suggestedLevel||"";
       var sug=(!u.level&&e.suggestedLevel)?' <span title="suggested from feed">'+e.suggestedLevel+'</span>':"";
-      var opts=["","N5","N4-","N4","N3","N2+"].map(function(o){return '<option value="'+o+'" '+(o===lvl?"selected":"")+'>'+(o||"level…")+'</option>';}).join("");
+      var opts=["","N5","N4","N3","N2","N1"].map(function(o){return '<option value="'+o+'" '+(o===lvl?"selected":"")+'>'+(o||"level…")+'</option>';}).join("");
       return '<div class="ll-ep '+(u.heard?"heard":"")+'" data-guid="'+esc(e.guid)+'">'+
-        '<label class="ll-chk"><input type="checkbox" class="llc" '+(u.heard?"checked":"")+'></label>'+
         '<div class="ll-main"><div class="ll-title"><span class="ll-tag '+e.cls+'">'+(e.show==="teppei"?"Teppei":"Picnic")+'</span>'+esc(e.title)+sug+'</div>'+
         '<div class="ll-meta">'+(e.date?new Date(e.ts).toLocaleDateString():"")+
           (e.link?' · <a class="ll-link" href="'+esc(e.link)+'" target="_blank" rel="noopener">listen ↗</a>':"")+
           (u.tags?' · 🏷 '+esc(u.tags):"")+'</div>'+
         '<button class="ll-toggle">'+(u.level||u.tags?"edit level / tags":"add level / tags")+'</button>'+
         '<div class="ll-extra"><select class="lll">'+opts+'</select>'+
-        '<input type="text" class="llt" placeholder="topic / free-text tags…" value="'+esc(u.tags||"")+'"></div></div></div>';
+        '<input type="text" class="llt" placeholder="topic / free-text tags…" value="'+esc(u.tags||"")+'"></div></div>'+
+        '<label class="ll-chk"><input type="checkbox" class="llc" '+(u.heard?"checked":"")+'></label></div>';
     }
     function setState(guid,patch){userState[guid]=Object.assign({},userState[guid],patch);save(STATE_KEY,userState);}
     function render(errs){
@@ -362,7 +362,7 @@ const ready = [false, false, false, false];
 const shadows = [null, null, null, null];
 const WK_TOKEN_KEY = 'nikki_wk_token';
 const WK_LEVEL_KEY = 'nikki_wk_level';
-let currentLevel = parseInt(localStorage.getItem(WK_LEVEL_KEY)) || 9;
+let currentLevel = parseInt(localStorage.getItem(WK_LEVEL_KEY)) || 11;
 const weekSchedule = [
   [1, [2026,4,27]],
   [2, [2026,5,4]],
