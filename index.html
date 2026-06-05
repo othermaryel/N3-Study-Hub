@@ -101,6 +101,7 @@ html, body { height: 100%; font-family: 'Noto Sans JP', sans-serif; background: 
     <button class="tab wk"     onclick="show(2)"><span class="dot" style="background:#5a2a8a"></span>WK × Quartet</button>
     <button class="tab wk"     onclick="show(3)"><span class="dot" style="background:#5a2a8a"></span>WK × JLPT</button>
     <button class="tab ls"     onclick="show(4)"><span class="dot" style="background:#2a8a7a"></span>Listening</button>
+    <button class="tab ls"     onclick="show(5)"><span class="dot" style="background:#1c6e4a"></span>Episode Tracker</button>
   </div>
   <div class="wk-widget">
     <div class="wk-level-badge loading" id="wk-badge"><span class="lbl">WK</span><span class="lvl" id="wk-lvl-display">—</span></div>
@@ -122,6 +123,7 @@ html, body { height: 100%; font-family: 'Noto Sans JP', sans-serif; background: 
   <div class="panel"        id="p2"><div class="loader" id="l2">Loading…</div><div id="h2"></div></div>
   <div class="panel"        id="p3"><div class="loader" id="l3">Loading…</div><div id="h3"></div></div>
   <div class="panel"        id="p4"><div class="loader" id="l4">Loading…</div><div id="h4"></div></div>
+  <div class="panel"        id="p5"><div class="loader" id="l5">Loading…</div><div id="h5"></div></div>
 </div>
 <script>
 const QUARTET_CUM = {"1": 0, "2": 2, "3": 2, "4": 6, "5": 9, "6": 12, "7": 18, "8": 27, "9": 41, "10": 49, "11": 60, "12": 77, "13": 86, "14": 98, "15": 106, "16": 116, "17": 123, "18": 128, "19": 136, "20": 143, "21": 148, "22": 159, "23": 169, "24": 176, "25": 184, "26": 187, "27": 192, "28": 194, "29": 196, "30": 197, "31": 202, "32": 211, "33": 217, "34": 221, "35": 227, "36": 234, "37": 236, "38": 239, "39": 240, "40": 242, "41": 244, "42": 246, "43": 246, "44": 246, "45": 247, "46": 249, "47": 249, "48": 249, "49": 250, "50": 250, "51": 251, "52": 251, "53": 252, "54": 252, "55": 252, "56": 252, "57": 252, "58": 252, "59": 252, "60": 252};
@@ -132,14 +134,235 @@ const docs = [
   { style: "\n*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n\n.doc-root {\n  font-family: 'Noto Sans JP', sans-serif;\n  background: #F7F3E8;\n  background-image:\n    linear-gradient(rgba(139,109,65,0.10) 1px, transparent 1px),\n    linear-gradient(90deg, rgba(139,109,65,0.10) 1px, transparent 1px);\n  background-size: 24px 24px;\n  color: #1a1209;\n  min-height: 100vh;\n  padding: 3rem 1.5rem 4rem;\n}\n\n.container { max-width: 900px; margin: 0 auto; }\n\nheader {\n  margin-bottom: 1.75rem;\n  border-bottom: 1px solid #d8ccb4;\n  padding-bottom: 1.25rem;\n}\nh1 {\n  font-family: 'DM Serif Display', serif;\n  font-size: 1.75rem;\n  font-weight: 400;\n  color: #8b1a1a;\n  letter-spacing: .02em;\n}\n.sub { font-size: 12px; color: #9a8e7c; margin-top: .3rem; line-height: 1.6; }\n\n/* Summary cards */\n.cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));\n  gap: 8px;\n  margin-bottom: 1.5rem;\n}\n.card {\n  background: #ede8d8;\n  border: 1px solid #d8ccb4;\n  border-radius: 4px;\n  padding: 10px 14px;\n}\n.card-label { font-size: 9px; text-transform: uppercase; letter-spacing: .12em; color: #9a8e7c; }\n.card-value { font-family: 'DM Serif Display', serif; font-size: 1.5rem; line-height: 1.1; margin-top: 2px; }\n.card-sub { font-size: 10px; color: #5a4e3c; margin-top: 3px; }\n.card-n5 .card-value { color: #1a6b9b; }\n.card-n4 .card-value { color: #7a5a00; }\n.card-n3 .card-value { color: #8b1a1a; }\n\n/* Legend */\n.legend {\n  display: flex; gap: 16px; flex-wrap: wrap;\n  padding: 8px 12px;\n  background: #ede8d8;\n  border: 1px solid #d8ccb4;\n  border-radius: 4px;\n  margin-bottom: 1.25rem;\n}\n.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #5a4e3c; }\n.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }\n\n/* Phase band */\n.phase-band {\n  display: flex; align-items: center; gap: 8px;\n  padding: 6px 10px;\n  border-radius: 4px;\n  margin: 14px 0 5px;\n  font-size: 10px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase;\n}\n\n/* Table */\n.tbl-wrap { overflow-x: auto; }\ntable {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 12px;\n}\nthead th {\n  padding: 6px 8px;\n  font-size: 9px;\n  text-transform: uppercase;\n  letter-spacing: .1em;\n  color: #9a8e7c;\n  border-bottom: 1px solid #d8ccb4;\n  white-space: nowrap;\n  background: #f0ece0;\n}\nthead th.group-n5 { color: #1a6b9b; border-bottom: 2px solid #5a9bc0; }\nthead th.group-n4 { color: #7a5a00; border-bottom: 2px solid #c89a00; }\nthead th.group-n3 { color: #8b1a1a; border-bottom: 2px solid #c05a5a; }\nthead .group-header { text-align: center; padding: 4px 8px 2px; font-size: 11px; font-weight: 600; letter-spacing: .05em; }\n\ntr.phase-row td {\n  padding: 4px 8px;\n  font-size: 10px;\n  font-weight: 600;\n  letter-spacing: .07em;\n  text-transform: uppercase;\n  color: #5a4e3c;\n  border-top: 1px solid #d8ccb4;\n  border-bottom: 1px solid #d8ccb4;\n  background: #ede8d8;\n}\n\ntr.data-row td {\n  padding: 5px 8px;\n  border-bottom: 1px solid #ede8d8;\n  vertical-align: middle;\n  white-space: nowrap;\n}\ntr.data-row:last-child td { border-bottom: none; }\ntr.data-row:hover td { background: #fdf8ee; }\n\ntd.lvl-cell {\n  font-family: 'DM Serif Display', serif;\n  font-size: 1rem;\n  color: #5a4e3c;\n  width: 44px;\n  text-align: center;\n}\ntd.lvl-cell.you { color: #2a6a2a; font-weight: 700; }\n\n/* Bar cell */\n.bar-wrap { display: flex; align-items: center; gap: 5px; }\n.bar-track { background: #e0d8c8; border-radius: 2px; height: 5px; width: 54px; flex-shrink: 0; overflow: hidden; }\n.bar-fill { height: 100%; border-radius: 2px; }\n.pct-text { font-size: 11px; min-width: 36px; }\n.cum-text { font-size: 10px; color: #9a8e7c; min-width: 46px; }\n.new-text { font-size: 11px; min-width: 18px; text-align: right; color: #5a4e3c; }\n.new-text.zero { color: #c8c0b0; }\n\n/* 80% milestone rows */\ntr.milestone-row td {\n  padding: 3px 8px;\n  font-size: 10px;\n  font-style: italic;\n  color: #fff;\n  background: #5a4e3c;\n}\ntr.milestone-row.m-n5 td { background: #1a6b9b; }\ntr.milestone-row.m-n4 td { background: #8b7800; }\ntr.milestone-row.m-n3 td { background: #8b1a1a; }\n\n/* you-row highlight */\ntr.you-row td { background: #e8f0e8 !important; }\ntr.you-row td.lvl-cell { color: #2a6a2a; }\n\n.note {\n  font-size: 11px;\n  color: #9a8e7c;\n  margin-top: 1.25rem;\n  padding: 10px 12px;\n  background: #ede8d8;\n  border: 1px solid #d8ccb4;\n  border-radius: 4px;\n  line-height: 1.7;\n}\n.note strong { color: #5a4e3c; }\n", body: "<div class=\"container\">\n\n<header>\n  <h1>WaniKani \u00d7 JLPT \u2014 N5 \u00b7 N4 \u00b7 N3 Coverage<\/h1>\n  <div class=\"sub\">Cumulative kanji coverage per WaniKani level \u00b7 Source: writejapanese.com \u00b7 All 60 levels \u00b7 Your current level: 9<\/div>\n<\/header>\n\n<!-- Summary cards -->\n<div class=\"cards\">\n  <div class=\"card card-n5\">\n    <div class=\"card-label\">N5 total kanji<\/div>\n    <div class=\"card-value\">80<\/div>\n    <div class=\"card-sub\">80% reached at WK Level 6<\/div>\n  <\/div>\n  <div class=\"card card-n4\">\n    <div class=\"card-label\">N4 total kanji<\/div>\n    <div class=\"card-value\">170<\/div>\n    <div class=\"card-sub\">80% reached at WK Level 11<\/div>\n  <\/div>\n  <div class=\"card card-n3\">\n    <div class=\"card-label\">N3 total kanji<\/div>\n    <div class=\"card-value\">370<\/div>\n    <div class=\"card-sub\">80% reached at WK Level 25<\/div>\n  <\/div>\n  <div class=\"card\">\n    <div class=\"card-label\">Not in WaniKani<\/div>\n    <div class=\"card-value\" style=\"color:#5a4e3c;\">1<\/div>\n    <div class=\"card-sub\">\u6e2f (N3 only) \u2014 absent from all 60 levels<\/div>\n  <\/div>\n  <div class=\"card\">\n    <div class=\"card-label\">Your WK level<\/div>\n    <div class=\"card-value\" style=\"color:#2a6a2a;\">9<\/div>\n    <div class=\"card-sub\">N5: 95% \u00b7 N4: 67% \u00b7 N3: 21%<\/div>\n  <\/div>\n  <div class=\"card\">\n    <div class=\"card-label\">Your L30 goal<\/div>\n    <div class=\"card-value\" style=\"color:#5a2a8a;\">30<\/div>\n    <div class=\"card-sub\">N5: 100% \u00b7 N4: 100% \u00b7 N3: 90%<\/div>\n  <\/div>\n<\/div>\n\n<!-- Legend -->\n<div class=\"legend\">\n  <div class=\"legend-item\"><div class=\"legend-dot\" style=\"background:#1a6b9b;\"><\/div> N5 (80 kanji)<\/div>\n  <div class=\"legend-item\"><div class=\"legend-dot\" style=\"background:#c89a00;\"><\/div> N4 (170 kanji)<\/div>\n  <div class=\"legend-item\"><div class=\"legend-dot\" style=\"background:#c05a5a;\"><\/div> N3 (370 kanji)<\/div>\n  <div class=\"legend-item\"><div class=\"legend-dot\" style=\"background:#2a6a2a;\"><\/div> Your current level (L9)<\/div>\n  <div class=\"legend-item\"><div class=\"legend-dot\" style=\"background:#8b1a1a;\"><\/div> 80% threshold rows<\/div>\n<\/div>\n\n<div class=\"tbl-wrap\">\n<table>\n  <thead>\n    <tr>\n      <th rowspan=\"2\" style=\"width:44px;\">Lvl<\/th>\n      <th colspan=\"3\" class=\"group-header group-n5\" style=\"color:#1a6b9b;\">N5 (80)<\/th>\n      <th colspan=\"3\" class=\"group-header group-n4\" style=\"color:#7a5a00;\">N4 (170)<\/th>\n      <th colspan=\"3\" class=\"group-header group-n3\" style=\"color:#8b1a1a;\">N3 (370)<\/th>\n    <\/tr>\n    <tr>\n      <th class=\"group-n5\">+New<\/th>\n      <th class=\"group-n5\">Cum.<\/th>\n      <th class=\"group-n5\">%<\/th>\n      <th class=\"group-n4\">+New<\/th>\n      <th class=\"group-n4\">Cum.<\/th>\n      <th class=\"group-n4\">%<\/th>\n      <th class=\"group-n3\">+New<\/th>\n      <th class=\"group-n3\">Cum.<\/th>\n      <th class=\"group-n3\">%<\/th>\n    <\/tr>\n  <\/thead>\n  <tbody id=\"tbl-body\"><\/tbody>\n<\/table>\n<\/div>\n\n<div class=\"note\">\n  <strong>Notes:<\/strong> No official JLPT kanji lists exist \u2014 all three lists are community consensus derived from past exam data (source: writejapanese.com). Counts are for the kanji specific to that level, not cumulative across levels. One N3 kanji, <strong>\u6e2f<\/strong> (harbor), does not appear anywhere in WaniKani's 60 levels. All N5 and N4 kanji are fully covered by WK. Rows where no new kanji appear are omitted for compactness.\n<\/div>\n\n<\/div><!-- /container -->\n\n<script>\n// [lvl, n5new, n5cum, n5pct, n4new, n4cum, n4pct, n3new, n3cum, n3pct]\nconst data = [\n  [1,15,15,18.8,3,3,1.8,0,0,0.0],\n  [2,20,35,43.8,8,11,6.5,2,2,0.5],\n  [3,11,46,57.5,13,24,14.1,4,6,1.6],\n  [4,9,55,68.8,12,36,21.2,8,14,3.8],\n  [5,8,63,78.8,21,57,33.5,8,22,5.9],\n  [6,6,69,86.2,15,72,42.4,11,33,8.9],\n  [7,4,73,91.2,14,86,50.6,12,45,12.2],\n  [8,3,76,95.0,13,99,58.2,15,60,16.2],\n  [9,0,76,95.0,15,114,67.1,19,79,21.4],\n  [10,3,79,98.8,16,130,76.5,16,95,25.7],\n  [11,0,79,98.8,6,136,80.0,23,118,31.9],\n  [12,0,79,98.8,9,145,85.3,15,133,35.9],\n  [13,0,79,98.8,6,151,88.8,13,146,39.5],\n  [14,0,79,98.8,1,152,89.4,14,160,43.2],\n  [15,0,79,98.8,7,159,93.5,15,175,47.3],\n  [16,1,80,100.0,4,163,95.9,16,191,51.6],\n  [17,0,80,100.0,2,165,97.1,18,209,56.5],\n  [18,0,80,100.0,2,167,98.2,12,221,59.7],\n  [19,0,80,100.0,0,167,98.2,10,231,62.4],\n  [20,0,80,100.0,0,167,98.2,17,248,67.0],\n  [21,0,80,100.0,1,168,98.8,14,262,70.8],\n  [22,0,80,100.0,0,168,98.8,11,273,73.8],\n  [23,0,80,100.0,0,168,98.8,11,284,76.8],\n  [24,0,80,100.0,1,169,99.4,4,288,77.8],\n  [25,0,80,100.0,0,169,99.4,14,302,81.6],\n  [26,0,80,100.0,0,169,99.4,0,302,81.6],\n  [27,0,80,100.0,1,170,100.0,11,313,84.6],\n  [28,0,80,100.0,0,170,100.0,5,318,85.9],\n  [29,0,80,100.0,0,170,100.0,6,324,87.6],\n  [30,0,80,100.0,0,170,100.0,9,333,90.0],\n  [31,0,80,100.0,0,170,100.0,6,339,91.6],\n  [32,0,80,100.0,0,170,100.0,6,345,93.2],\n  [33,0,80,100.0,0,170,100.0,3,348,94.1],\n  [34,0,80,100.0,0,170,100.0,3,351,94.9],\n  [35,0,80,100.0,0,170,100.0,4,355,95.9],\n  [36,0,80,100.0,0,170,100.0,2,357,96.5],\n  [37,0,80,100.0,0,170,100.0,2,359,97.0],\n  [38,0,80,100.0,0,170,100.0,2,361,97.6],\n  [39,0,80,100.0,0,170,100.0,1,362,97.8],\n  [40,0,80,100.0,0,170,100.0,1,363,98.1],\n  [42,0,80,100.0,0,170,100.0,1,364,98.4],\n  [44,0,80,100.0,0,170,100.0,1,365,98.6],\n  [46,0,80,100.0,0,170,100.0,1,366,98.9],\n  [50,0,80,100.0,0,170,100.0,1,367,99.2],\n  [51,0,80,100.0,0,170,100.0,2,369,99.7],\n];\n\nconst phases = [\n  { label: \"\u5feb Pleasant \u2014 Levels 1\u201310\", lvls: new Set([1,2,3,4,5,6,7,8,9,10]), color:\"#1a6b9b\", bg:\"#e8f4f8\", border:\"#b8d8e8\" },\n  { label: \"\u82e6 Painful \u2014 Levels 11\u201320\",  lvls: new Set([11,12,13,14,15,16,17,18,19,20]), color:\"#7a5a00\", bg:\"#fdf3e0\", border:\"#e8d88b\" },\n  { label: \"\u6b7b Death \u2014 Levels 21\u201330\",    lvls: new Set([21,22,23,24,25,26,27,28,29,30]), color:\"#8b1a1a\", bg:\"#f5e8e8\", border:\"#e8c5c5\" },\n  { label: \"\u5730\u7344 Hell \u2014 Levels 31\u201340\",   lvls: new Set([31,32,33,34,35,36,37,38,39,40]), color:\"#5a4020\", bg:\"#ede8d8\", border:\"#c8b890\" },\n  { label: \"\u5929\u56fd Paradise \u2014 Levels 41\u201350\", lvls: new Set([41,42,43,44,45,46,47,48,49,50]), color:\"#2a5a2a\", bg:\"#e8ede8\", border:\"#b0c8b0\" },\n  { label: \"\u73fe\u5b9f Reality \u2014 Levels 51\u201360\",  lvls: new Set([51,52,53,54,55,56,57,58,59,60]), color:\"#3a1a5a\", bg:\"#ece8f0\", border:\"#c0b0d0\" },\n];\n\n// Milestone triggers: first time each list crosses 80%\nconst milestones = { n5: 6, n4: 11, n3: 25 };\n\nfunction bar(pct, color) {\n  return `<div class=\"bar-track\"><div class=\"bar-fill\" style=\"width:${Math.min(pct,100)}%;background:${color};\"><\/div><\/div>`;\n}\nfunction pctCell(pct, color) {\n  return `<span class=\"pct-text\" style=\"color:${pct>=80?color:'#5a4e3c'};font-weight:${pct>=80?600:400};\">${pct.toFixed(1)}%<\/span>`;\n}\nfunction cumCell(cum, total) {\n  return `<span class=\"cum-text\">${cum}/${total}<\/span>`;\n}\nfunction newCell(n) {\n  return `<span class=\"new-text${n===0?' zero':''}\">${n===0?'\u2014':'+'+n}<\/span>`;\n}\n\nconst tbody = document.getElementById('tbl-body');\nlet currentPhase = -1;\nlet shownMilestone = { n5: false, n4: false, n3: false };\n\ndata.forEach(([lvl, n5n, n5c, n5p, n4n, n4c, n4p, n3n, n3c, n3p]) => {\n  // Find phase\n  const phaseIdx = phases.findIndex(p => p.lvls.has(lvl) || [...p.lvls].some(l => l <= lvl && lvl <= Math.max(...p.lvls)));\n  let ph = phases.find(p => {\n    const arr = [...p.lvls];\n    return lvl >= Math.min(...arr) && lvl <= Math.max(...arr);\n  });\n  if (!ph) ph = phases[phases.length-1];\n  const phIdx = phases.indexOf(ph);\n\n  // Inject phase row when phase changes\n  if (phIdx !== currentPhase) {\n    currentPhase = phIdx;\n    const pr = document.createElement('tr');\n    pr.className = 'phase-row';\n    pr.innerHTML = `<td colspan=\"10\" style=\"color:${ph.color};\">\u2b1b ${ph.label}<\/td>`;\n    tbody.appendChild(pr);\n  }\n\n  // Check milestones before this row\n  if (!shownMilestone.n5 && n5c >= 64) { // 80% of 80 = 64\n    shownMilestone.n5 = true;\n    const mr = document.createElement('tr');\n    mr.className = 'milestone-row m-n5';\n    mr.innerHTML = `<td colspan=\"10\">\u25b6 N5 crosses 80% \u2014 Level ${milestones.n5} covers 69/80 (86.2%)<\/td>`;\n    tbody.appendChild(mr);\n  }\n  if (!shownMilestone.n4 && n4c >= 136) {\n    shownMilestone.n4 = true;\n    const mr = document.createElement('tr');\n    mr.className = 'milestone-row m-n4';\n    mr.innerHTML = `<td colspan=\"10\">\u25b6 N4 crosses 80% \u2014 Level ${milestones.n4} covers 136/170 (80.0%)<\/td>`;\n    tbody.appendChild(mr);\n  }\n  if (!shownMilestone.n3 && n3c >= 296) {\n    shownMilestone.n3 = true;\n    const mr = document.createElement('tr');\n    mr.className = 'milestone-row m-n3';\n    mr.innerHTML = `<td colspan=\"10\">\u25b6 N3 crosses 80% \u2014 Level ${milestones.n3} covers 302/370 (81.6%)<\/td>`;\n    tbody.appendChild(mr);\n  }\n\n  const isYou = lvl === 9;\n  const tr = document.createElement('tr');\n  tr.className = `data-row${isYou ? ' you-row' : ''}`;\n  tr.innerHTML = `\n    <td class=\"lvl-cell${isYou?' you':''}\">${lvl}${isYou?'<br><span style=\"font-family:sans-serif;font-size:8px;color:#2a6a2a;letter-spacing:.05em;\">YOU<\/span>':''}<\/td>\n    <td>${newCell(n5n)}<\/td>\n    <td>${cumCell(n5c,80)}<\/td>\n    <td><div class=\"bar-wrap\">${bar(n5p,'#5a9bc0')}${pctCell(n5p,'#1a6b9b')}<\/div><\/td>\n    <td>${newCell(n4n)}<\/td>\n    <td>${cumCell(n4c,170)}<\/td>\n    <td><div class=\"bar-wrap\">${bar(n4p,'#c89a00')}${pctCell(n4p,'#7a5a00')}<\/div><\/td>\n    <td>${newCell(n3n)}<\/td>\n    <td>${cumCell(n3c,370)}<\/td>\n    <td><div class=\"bar-wrap\">${bar(n3p,'#c05a5a')}${pctCell(n3p,'#8b1a1a')}<\/div><\/td>\n  `;\n  tbody.appendChild(tr);\n});\n<\/script>", script: "\n// [lvl, n5new, n5cum, n5pct, n4new, n4cum, n4pct, n3new, n3cum, n3pct]\nconst data = [\n  [1,15,15,18.8,3,3,1.8,0,0,0.0],\n  [2,20,35,43.8,8,11,6.5,2,2,0.5],\n  [3,11,46,57.5,13,24,14.1,4,6,1.6],\n  [4,9,55,68.8,12,36,21.2,8,14,3.8],\n  [5,8,63,78.8,21,57,33.5,8,22,5.9],\n  [6,6,69,86.2,15,72,42.4,11,33,8.9],\n  [7,4,73,91.2,14,86,50.6,12,45,12.2],\n  [8,3,76,95.0,13,99,58.2,15,60,16.2],\n  [9,0,76,95.0,15,114,67.1,19,79,21.4],\n  [10,3,79,98.8,16,130,76.5,16,95,25.7],\n  [11,0,79,98.8,6,136,80.0,23,118,31.9],\n  [12,0,79,98.8,9,145,85.3,15,133,35.9],\n  [13,0,79,98.8,6,151,88.8,13,146,39.5],\n  [14,0,79,98.8,1,152,89.4,14,160,43.2],\n  [15,0,79,98.8,7,159,93.5,15,175,47.3],\n  [16,1,80,100.0,4,163,95.9,16,191,51.6],\n  [17,0,80,100.0,2,165,97.1,18,209,56.5],\n  [18,0,80,100.0,2,167,98.2,12,221,59.7],\n  [19,0,80,100.0,0,167,98.2,10,231,62.4],\n  [20,0,80,100.0,0,167,98.2,17,248,67.0],\n  [21,0,80,100.0,1,168,98.8,14,262,70.8],\n  [22,0,80,100.0,0,168,98.8,11,273,73.8],\n  [23,0,80,100.0,0,168,98.8,11,284,76.8],\n  [24,0,80,100.0,1,169,99.4,4,288,77.8],\n  [25,0,80,100.0,0,169,99.4,14,302,81.6],\n  [26,0,80,100.0,0,169,99.4,0,302,81.6],\n  [27,0,80,100.0,1,170,100.0,11,313,84.6],\n  [28,0,80,100.0,0,170,100.0,5,318,85.9],\n  [29,0,80,100.0,0,170,100.0,6,324,87.6],\n  [30,0,80,100.0,0,170,100.0,9,333,90.0],\n  [31,0,80,100.0,0,170,100.0,6,339,91.6],\n  [32,0,80,100.0,0,170,100.0,6,345,93.2],\n  [33,0,80,100.0,0,170,100.0,3,348,94.1],\n  [34,0,80,100.0,0,170,100.0,3,351,94.9],\n  [35,0,80,100.0,0,170,100.0,4,355,95.9],\n  [36,0,80,100.0,0,170,100.0,2,357,96.5],\n  [37,0,80,100.0,0,170,100.0,2,359,97.0],\n  [38,0,80,100.0,0,170,100.0,2,361,97.6],\n  [39,0,80,100.0,0,170,100.0,1,362,97.8],\n  [40,0,80,100.0,0,170,100.0,1,363,98.1],\n  [42,0,80,100.0,0,170,100.0,1,364,98.4],\n  [44,0,80,100.0,0,170,100.0,1,365,98.6],\n  [46,0,80,100.0,0,170,100.0,1,366,98.9],\n  [50,0,80,100.0,0,170,100.0,1,367,99.2],\n  [51,0,80,100.0,0,170,100.0,2,369,99.7],\n];\n\nconst phases = [\n  { label: \"\u5feb Pleasant \u2014 Levels 1\u201310\", lvls: new Set([1,2,3,4,5,6,7,8,9,10]), color:\"#1a6b9b\", bg:\"#e8f4f8\", border:\"#b8d8e8\" },\n  { label: \"\u82e6 Painful \u2014 Levels 11\u201320\",  lvls: new Set([11,12,13,14,15,16,17,18,19,20]), color:\"#7a5a00\", bg:\"#fdf3e0\", border:\"#e8d88b\" },\n  { label: \"\u6b7b Death \u2014 Levels 21\u201330\",    lvls: new Set([21,22,23,24,25,26,27,28,29,30]), color:\"#8b1a1a\", bg:\"#f5e8e8\", border:\"#e8c5c5\" },\n  { label: \"\u5730\u7344 Hell \u2014 Levels 31\u201340\",   lvls: new Set([31,32,33,34,35,36,37,38,39,40]), color:\"#5a4020\", bg:\"#ede8d8\", border:\"#c8b890\" },\n  { label: \"\u5929\u56fd Paradise \u2014 Levels 41\u201350\", lvls: new Set([41,42,43,44,45,46,47,48,49,50]), color:\"#2a5a2a\", bg:\"#e8ede8\", border:\"#b0c8b0\" },\n  { label: \"\u73fe\u5b9f Reality \u2014 Levels 51\u201360\",  lvls: new Set([51,52,53,54,55,56,57,58,59,60]), color:\"#3a1a5a\", bg:\"#ece8f0\", border:\"#c0b0d0\" },\n];\n\n// Milestone triggers: first time each list crosses 80%\nconst milestones = { n5: 6, n4: 11, n3: 25 };\n\nfunction bar(pct, color) {\n  return `<div class=\"bar-track\"><div class=\"bar-fill\" style=\"width:${Math.min(pct,100)}%;background:${color};\"><\/div><\/div>`;\n}\nfunction pctCell(pct, color) {\n  return `<span class=\"pct-text\" style=\"color:${pct>=80?color:'#5a4e3c'};font-weight:${pct>=80?600:400};\">${pct.toFixed(1)}%<\/span>`;\n}\nfunction cumCell(cum, total) {\n  return `<span class=\"cum-text\">${cum}/${total}<\/span>`;\n}\nfunction newCell(n) {\n  return `<span class=\"new-text${n===0?' zero':''}\">${n===0?'\u2014':'+'+n}<\/span>`;\n}\n\nconst tbody = document.getElementById('tbl-body');\nlet currentPhase = -1;\nlet shownMilestone = { n5: false, n4: false, n3: false };\n\ndata.forEach(([lvl, n5n, n5c, n5p, n4n, n4c, n4p, n3n, n3c, n3p]) => {\n  // Find phase\n  const phaseIdx = phases.findIndex(p => p.lvls.has(lvl) || [...p.lvls].some(l => l <= lvl && lvl <= Math.max(...p.lvls)));\n  let ph = phases.find(p => {\n    const arr = [...p.lvls];\n    return lvl >= Math.min(...arr) && lvl <= Math.max(...arr);\n  });\n  if (!ph) ph = phases[phases.length-1];\n  const phIdx = phases.indexOf(ph);\n\n  // Inject phase row when phase changes\n  if (phIdx !== currentPhase) {\n    currentPhase = phIdx;\n    const pr = document.createElement('tr');\n    pr.className = 'phase-row';\n    pr.innerHTML = `<td colspan=\"10\" style=\"color:${ph.color};\">\u2b1b ${ph.label}<\/td>`;\n    tbody.appendChild(pr);\n  }\n\n  // Check milestones before this row\n  if (!shownMilestone.n5 && n5c >= 64) { // 80% of 80 = 64\n    shownMilestone.n5 = true;\n    const mr = document.createElement('tr');\n    mr.className = 'milestone-row m-n5';\n    mr.innerHTML = `<td colspan=\"10\">\u25b6 N5 crosses 80% \u2014 Level ${milestones.n5} covers 69/80 (86.2%)<\/td>`;\n    tbody.appendChild(mr);\n  }\n  if (!shownMilestone.n4 && n4c >= 136) {\n    shownMilestone.n4 = true;\n    const mr = document.createElement('tr');\n    mr.className = 'milestone-row m-n4';\n    mr.innerHTML = `<td colspan=\"10\">\u25b6 N4 crosses 80% \u2014 Level ${milestones.n4} covers 136/170 (80.0%)<\/td>`;\n    tbody.appendChild(mr);\n  }\n  if (!shownMilestone.n3 && n3c >= 296) {\n    shownMilestone.n3 = true;\n    const mr = document.createElement('tr');\n    mr.className = 'milestone-row m-n3';\n    mr.innerHTML = `<td colspan=\"10\">\u25b6 N3 crosses 80% \u2014 Level ${milestones.n3} covers 302/370 (81.6%)<\/td>`;\n    tbody.appendChild(mr);\n  }\n\n  const isYou = lvl === 9;\n  const tr = document.createElement('tr');\n  tr.className = `data-row${isYou ? ' you-row' : ''}`;\n  tr.innerHTML = `\n    <td class=\"lvl-cell${isYou?' you':''}\">${lvl}${isYou?'<br><span style=\"font-family:sans-serif;font-size:8px;color:#2a6a2a;letter-spacing:.05em;\">YOU<\/span>':''}<\/td>\n    <td>${newCell(n5n)}<\/td>\n    <td>${cumCell(n5c,80)}<\/td>\n    <td><div class=\"bar-wrap\">${bar(n5p,'#5a9bc0')}${pctCell(n5p,'#1a6b9b')}<\/div><\/td>\n    <td>${newCell(n4n)}<\/td>\n    <td>${cumCell(n4c,170)}<\/td>\n    <td><div class=\"bar-wrap\">${bar(n4p,'#c89a00')}${pctCell(n4p,'#7a5a00')}<\/div><\/td>\n    <td>${newCell(n3n)}<\/td>\n    <td>${cumCell(n3c,370)}<\/td>\n    <td><div class=\"bar-wrap\">${bar(n3p,'#c05a5a')}${pctCell(n3p,'#8b1a1a')}<\/div><\/td>\n  `;\n  tbody.appendChild(tr);\n});\n" },
   { style: ":host { display:block; }\n  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }\n  body, .doc-root { font-family:'Noto Sans JP',sans-serif; background:#F7F3E8; background-image: linear-gradient(rgba(139,109,65,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(139,109,65,0.10) 1px, transparent 1px); background-size: 24px 24px; color:var(--ink,#1a1209); padding:3rem 1.5rem 4rem; min-height:100vh; }\n  .container { max-width:900px; margin:0 auto; }\n  h1 { font-family:'DM Serif Display',serif; font-size:1.55rem; font-weight:400; color:#8b1a1a; letter-spacing:.02em; margin-bottom:.25rem; }\n  .subtitle { font-size:.78rem; color:#9a8e7c; letter-spacing:.06em; text-transform:uppercase; margin-bottom:2rem; }\n  .phase-block { margin-bottom:2.5rem; }\n  .phase-header { display:flex; align-items:center; gap:.65rem; margin-bottom:.7rem; }\n  .phase-pip { width:10px; height:10px; border-radius:50%; flex-shrink:0; }\n  .phase-title { font-family:'DM Serif Display',serif; font-size:1.05rem; color:#1a1209; }\n  .phase-sub { font-size:.72rem; color:#9a8e7c; letter-spacing:.05em; text-transform:uppercase; margin-left:.2rem; }\n  table { width:100%; border-collapse:collapse; background:#fff9ef; border:1px solid #d8ccb4; border-radius:6px; overflow:hidden; font-size:.8rem; box-shadow:0 2px 12px rgba(139,109,65,0.07); margin-bottom:0; }\n  thead tr { background:#ede8d8; }\n  th { text-align:left; padding:.55rem .85rem; font-size:.68rem; font-weight:500; color:#9a8e7c; letter-spacing:.1em; text-transform:uppercase; border-bottom:2px solid #d8ccb4; }\n  td { padding:.6rem .85rem; color:#1a1209; vertical-align:top; border-bottom:1px solid #d8ccb4; line-height:1.5; }\n  tr:last-child td { border-bottom:none; }\n  tr:hover td { background:#f5f0e4; }\n  .resource-name { font-weight:500; color:#1a1209; }\n  .resource-host { font-size:.72rem; color:#9a8e7c; }\n  .level-pill { display:inline-block; font-size:.65rem; font-weight:600; letter-spacing:.06em; padding:1px 7px; border-radius:20px; text-transform:uppercase; white-space:nowrap; }\n  .pill-n4 { background:#e8f4ec; color:#3a7a5a; border:1px solid #b8d8c4; }\n  .pill-n3 { background:#fde8e8; color:#8b1a1a; border:1px solid #e8b8b8; }\n  .pill-n4n3 { background:#fff3e0; color:#7a4a1a; border:1px solid #e8d0a8; }\n  .pill-n3n2 { background:#f0e8fd; color:#5a2a8a; border:1px solid #d0b8e8; }\n  .platform-link { font-size:.72rem; }\n  .platform-link a { color:#2a8a7a; text-decoration:none; border-bottom:1px dotted #2a8a7a; }\n  .platform-link a:hover { color:#1a5a4a; }\n  .note-tag { display:inline-block; font-size:.65rem; color:#9a8e7c; background:#ede8d8; border-radius:3px; padding:1px 6px; margin-top:2px; }\n  .section-divider { border:none; border-top:1px solid #d8ccb4; margin:2rem 0; }\n  @media(max-width:600px){\n    .doc-root { padding:1.5rem 1rem 2.5rem; }\n    th, td { padding:.5rem .6rem; }\n    .phase-title { font-size:.95rem; }\n  }",
     body:  "<div class=\"container\">\n<h1>Listening Practice</h1>\n<p class=\"subtitle\">Tiered by study phase &nbsp;\u00b7&nbsp; Weeks 1\u201330</p>\n\n<div class=\"phase-block\">\n  <div class=\"phase-header\">\n    <span class=\"phase-pip\" style=\"background:#2a8a7a\"></span>\n    <span class=\"phase-title\">Phase 1 \u2014 Now</span>\n    <span class=\"phase-sub\">Weeks 1\u201320 \u00b7 Daily listening</span>\n  </div>\n  <table>\n    <thead><tr>\n      <th>Resource</th>\n      <th>Level</th>\n      <th>Notes</th>\n      <th>Platform</th>\n    </tr></thead>\n    <tbody>\n      <tr>\n        <td><div class=\"resource-name\">Nihongo con Teppei for Beginners</div><div class=\"resource-host\">Teppei</div></td>\n        <td><span class=\"level-pill pill-n4n3\">N4\u2013N3</span></td>\n        <td>Beginner feed, N4\u2013N3 transition</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/4W4jYoKRmjlURKO1fIfcOK\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Nihongo Picnic Podcast</div><div class=\"resource-host\">\u65e5\u672c\u8a9e with \u3042\u3053 (Ako)</div></td>\n        <td><span class=\"level-pill pill-n4\">N4</span></td>\n        <td>\ud83d\udeb2 episodes \u00b7 Free Notion transcripts</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/0R4NOp9zCiAzn8ORDdnnKO\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Comprehensible Japanese</div><div class=\"resource-host\">Yuki Kimura</div></td>\n        <td><span class=\"level-pill pill-n4n3\">N4\u2013N3</span></td>\n        <td>Beginner + intermediate playlists \u00b7 Furigana transcripts</td>\n        <td class=\"platform-link\"><a href=\"https://www.youtube.com/c/ComprehensibleJapanese\" target=\"_blank\">YouTube</a></td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n\n<hr class=\"section-divider\">\n\n<div class=\"phase-block\">\n  <div class=\"phase-header\">\n    <span class=\"phase-pip\" style=\"background:#c74a4a\"></span>\n    <span class=\"phase-title\">Phase 2 \u2014 Ramp-up</span>\n    <span class=\"phase-sub\">Week 21+ \u00b7 Core listening</span>\n  </div>\n  <table>\n    <thead><tr>\n      <th>Resource</th>\n      <th>Level</th>\n      <th>Notes</th>\n      <th>Platform</th>\n    </tr></thead>\n    <tbody>\n      <tr>\n        <td><div class=\"resource-name\">Nihongo Picnic Podcast</div><div class=\"resource-host\">\u65e5\u672c\u8a9e with \u3042\u3053 (Ako)</div></td>\n        <td><span class=\"level-pill pill-n3\">N3</span></td>\n        <td>\ud83d\ude83 episodes, N3-level</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/0R4NOp9zCiAzn8ORDdnnKO\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Haru no Nihongo</div><div class=\"resource-host\">Haruka</div></td>\n        <td><span class=\"level-pill pill-n4n3\">N4\u2013N3</span></td>\n        <td>Daily Japanese Talk series \u00b7 Free transcripts</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/1gQ0ZdFpTOqiyLeOaCCn6U\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Let's Talk in Japanese!</div><div class=\"resource-host\">Tomo</div></td>\n        <td><span class=\"level-pill pill-n3\">N3</span></td>\n        <td>Filter for N3-labeled episodes \u00b7 10\u201315 min</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/episode/55znu1y8ZAXLRxDxPxaJJI\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Learn Japanese with Noriko</div><div class=\"resource-host\">Noriko</div></td>\n        <td><span class=\"level-pill pill-n3\">N3</span></td>\n        <td>All-Japanese N3 monologues + guest conversations \u00b7 Scripts on her site</td>\n        <td class=\"platform-link\"><a href=\"https://www.youtube.com/@LearnJapanesewithNoriko\" target=\"_blank\">YouTube</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Nihongo no Mori + Sambon Juku</div><div class=\"resource-host\">nihongonomori / sambonJUKU</div></td>\n        <td><span class=\"level-pill pill-n3\">N3</span></td>\n        <td>N3 grammar playlists in Japanese \u00b7 Doubles as JLPT review</td>\n        <td class=\"platform-link\"><a href=\"https://www.youtube.com/@nihongonomori\" target=\"_blank\">YouTube (Mori)</a><br><a href=\"https://www.youtube.com/@sambonJUKU\" target=\"_blank\">YouTube (Sambon)</a></td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n\n<hr class=\"section-divider\">\n\n<div class=\"phase-block\">\n  <div class=\"phase-header\">\n    <span class=\"phase-pip\" style=\"background:#5a2a8a\"></span>\n    <span class=\"phase-title\">Phase 3 \u2014 Stretch</span>\n    <span class=\"phase-sub\">October \u2013 December 6 \u00b7 Exam buffer</span>\n  </div>\n  <table>\n    <thead><tr>\n      <th>Resource</th>\n      <th>Level</th>\n      <th>Notes</th>\n      <th>Platform</th>\n    </tr></thead>\n    <tbody>\n      <tr>\n        <td><div class=\"resource-name\">Everyday Japanese Podcast</div><div class=\"resource-host\">Sayuri Saying</div></td>\n        <td><span class=\"level-pill pill-n3n2\">N3\u2013N2</span></td>\n        <td>Natural-speed Japanese \u00b7 Weekly</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/2rJ02XGd3XIT9Ovo1T7llu\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Haru no Nihongo (main feed)</div><div class=\"resource-host\">Haruka</div></td>\n        <td><span class=\"level-pill pill-n3n2\">N3\u2013N1</span></td>\n        <td>Normal Episode series \u00b7 Faster pace</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/1gQ0ZdFpTOqiyLeOaCCn6U\" target=\"_blank\">Spotify</a></td>\n      </tr>\n      <tr>\n        <td><div class=\"resource-name\">Nihongo con Teppei Z</div><div class=\"resource-host\">Teppei</div></td>\n        <td><span class=\"level-pill pill-n3n2\">N3\u2013N2</span></td>\n        <td>Intermediate feed \u00b7 More nuanced language</td>\n        <td class=\"platform-link\"><a href=\"https://open.spotify.com/show/3PvOEq3O9l2BU52zJKvbUJ\" target=\"_blank\">Spotify</a></td>\n      </tr>\n    </tbody>\n  </table>\n</div>\n</div>",
-    script: '' }
+    script: '' },
+  {
+  style: `
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .doc-root{font-family:'Noto Sans JP',sans-serif;background:#F7F3E8;
+      background-image:linear-gradient(rgba(139,109,65,0.10) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(139,109,65,0.10) 1px,transparent 1px);
+      background-size:24px 24px;color:#1a1209;min-height:100vh;padding:3rem 1.5rem 4rem;}
+    .container{max-width:900px;margin:0 auto;}
+    header{margin-bottom:1.5rem;border-bottom:1px solid #d8ccb4;padding-bottom:1.25rem;}
+    h1{font-family:'DM Serif Display',serif;font-size:1.75rem;font-weight:400;color:#8b1a1a;letter-spacing:.02em;}
+    .sub{font-size:12px;color:#9a8e7c;margin-top:.3rem;line-height:1.6;}
+    .ll-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:1.25rem 0 1.1rem;}
+    .ll-search{flex:1;min-width:200px;position:relative;}
+    .ll-search input{width:100%;font-family:'Noto Serif JP',serif;font-size:15px;color:#1a1209;
+      background:#ede8d8;border:1px solid #d8ccb4;border-radius:4px;padding:.5rem .7rem .5rem 1.9rem;}
+    .ll-search input:focus{outline:none;border-color:#c94040;}
+    .ll-search::before{content:"🔍";position:absolute;left:.55rem;top:50%;transform:translateY(-50%);font-size:12px;opacity:.5;}
+    .ll-sel{font-family:'Noto Sans JP',sans-serif;font-size:13px;color:#5a4e3c;background:#ede8d8;
+      border:1px solid #d8ccb4;border-radius:4px;padding:.5rem .55rem;}
+    .ll-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.9rem;}
+    .ll-chip{font-size:12px;padding:.33rem .8rem;border-radius:4px;cursor:pointer;background:#ede8d8;
+      color:#5a4e3c;border:1px solid #d8ccb4;transition:background .15s ease;}
+    .ll-chip:hover{background:#d8ccb4;}
+    .ll-chip.active{background:#f5e8e8;color:#8b1a1a;border-color:#c94040;}
+    .ll-stats{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#9a8e7c;
+      margin-bottom:.9rem;display:flex;gap:1.2rem;flex-wrap:wrap;}
+    .ll-stats b{color:#5a4e3c;font-weight:500;}
+    .ll-ep{display:flex;gap:.8rem;padding:.65rem .2rem;border-bottom:1px solid #d8ccb4;align-items:flex-start;}
+    .ll-ep:last-child{border-bottom:none;}
+    .ll-ep.heard{opacity:.55;}
+    .ll-ep.heard .ll-title{text-decoration:line-through;text-decoration-color:#9a8e7c;}
+    .ll-chk{margin-top:.18rem;}
+    .ll-chk input{width:17px;height:17px;accent-color:#8b1a1a;cursor:pointer;}
+    .ll-main{flex:1;min-width:0;}
+    .ll-title{font-family:'Noto Serif JP',serif;font-size:15px;color:#1a1209;display:flex;
+      align-items:center;gap:.5rem;flex-wrap:wrap;}
+    .ll-meta{font-size:11px;color:#9a8e7c;margin-top:2px;}
+    .ll-tag{font-size:10px;padding:.1rem .45rem;border-radius:3px;color:#fff;white-space:nowrap;font-weight:500;}
+    .ll-teppei{background:#8b1a1a;}
+    .ll-picnic{background:#1c6e4a;}
+    .ll-extra{margin-top:.5rem;display:none;gap:.6rem;flex-wrap:wrap;align-items:center;}
+    .ll-ep.open .ll-extra{display:flex;}
+    .ll-extra select{font-size:12px;padding:.3rem .45rem;}
+    .ll-extra input[type=text]{flex:1;min-width:140px;font-family:'Noto Serif JP',serif;font-size:13px;
+      background:#ede8d8;border:1px solid #d8ccb4;border-radius:4px;padding:.33rem .55rem;}
+    .ll-extra input:focus{outline:none;border-color:#c94040;}
+    .ll-toggle{font-size:11px;color:#8b1a1a;background:none;border:none;cursor:pointer;padding:0;
+      margin-top:.3rem;font-family:'Noto Sans JP',sans-serif;}
+    .ll-toggle:hover{color:#c94040;}
+    .ll-link{font-size:11px;color:#8b1a1a;text-decoration:none;}
+    .ll-link:hover{text-decoration:underline;}
+    .ll-state{padding:2.5rem 1rem;text-align:center;color:#9a8e7c;font-size:14px;}
+    .ll-spin{width:24px;height:24px;border:2px solid #d8ccb4;border-top-color:#8b1a1a;border-radius:50%;
+      margin:0 auto 1rem;animation:llspin .8s linear infinite;}
+    @keyframes llspin{to{transform:rotate(360deg);}}
+    .ll-btn{display:inline-block;padding:.5rem 1rem;border-radius:4px;font-size:13px;
+      font-family:'Noto Sans JP',sans-serif;cursor:pointer;border:none;background:#8b1a1a;color:#fff;}
+    .ll-btn:hover{background:#c94040;}
+    .ll-btn.sec{background:#ede8d8;color:#5a4e3c;border:1px solid #d8ccb4;}
+    .ll-loadmore{text-align:center;margin:1.2rem 0;}
+    .ll-foot{font-size:11px;color:#9a8e7c;margin-top:2rem;line-height:1.7;}
+    .ll-foot a{color:#8b1a1a;}
+    .ll-err{color:#8b1a1a;}
+  `,
+
+  /* MARKUP ONLY — innerHTML-injected, so no <script> here. */
+  body: `
+    <div class="container">
+      <header>
+        <h1>聴く Listening Log</h1>
+        <div class="sub">Podcast episodes for listening practice — search, track &amp; tag. Fetched live from each show's RSS feed.</div>
+      </header>
+      <div class="ll-controls">
+        <div class="ll-search"><input id="llSearch" type="text" placeholder="Search by title or topic…"></div>
+        <select class="ll-sel" id="llStatus">
+          <option value="all">All episodes</option>
+          <option value="unheard">Not yet heard</option>
+          <option value="heard">Heard</option>
+        </select>
+        <select class="ll-sel" id="llSort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+      <div class="ll-chips" id="llChips">
+        <div class="ll-chip active" data-show="all">All shows</div>
+        <div class="ll-chip" data-show="teppei">Nihongo con Teppei</div>
+        <div class="ll-chip" data-show="picnic">Nihongo Picnic</div>
+      </div>
+      <div class="ll-stats" id="llStats"></div>
+      <div id="llList"></div>
+      <div class="ll-loadmore" id="llMoreWrap" style="display:none;">
+        <button class="ll-btn sec" id="llMore">Show more episodes</button>
+      </div>
+      <div class="ll-foot">
+        Episodes are fetched live from each show's public RSS feed and cached locally.
+        Your checkboxes, levels &amp; notes are saved in this browser only.
+        <a href="#" id="llRefresh">Refresh feeds</a> · <a href="#" id="llClear">Clear cached episodes</a>
+      </div>
+    </div>
+  `,
+
+  /* LIVE JS — receives `document` rescoped to this panel's shadow root via the
+     hub's Proxy. Uses plain document.querySelector etc. throughout. */
+  script: `
+    var FEEDS=[
+      {id:"teppei",label:"Nihongo con Teppei",cls:"ll-teppei",url:"http://nihongoconteppei.com/feed/podcast"},
+      {id:"picnic",label:"Nihongo Picnic",cls:"ll-picnic",url:"https://anchor.fm/s/2e08a010/podcast/rss"}
+    ];
+    var PROXY="https://api.allorigins.win/raw?url=";
+    var CACHE_KEY="nikki_pod_cache_v1", STATE_KEY="nikki_pod_state_v1", PAGE=50;
+    var episodes=[], userState=load(STATE_KEY,{}), activeShow="all", shown=PAGE;
+    var listEl=document.querySelector("#llList");
+    if(!listEl) return;
+
+    function load(k,fb){try{var v=JSON.parse(localStorage.getItem(k));return v==null?fb:v;}catch(e){return fb;}}
+    function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+    function esc(s){return (s||"").replace(/[&<>\"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}
+    function guessLevel(d){if(!d)return "";if(d.indexOf("🚲")>-1)return "N4-";if(d.indexOf("🚃")>-1)return "N3";if(d.indexOf("🚀")>-1)return "N2+";return "";}
+
+    function parseFeed(xml,feed){
+      var doc=new DOMParser().parseFromString(xml,"text/xml");
+      if(doc.querySelector("parsererror")) throw new Error("parse "+feed.label);
+      return [].slice.call(doc.querySelectorAll("item")).map(function(it){
+        var get=function(t){var n=it.querySelector(t);return n?(n.textContent||"").trim():"";};
+        var title=get("title"), desc=get("description")||get("summary");
+        var guid=get("guid")||(feed.id+"|"+title);
+        var link=""; var ln=it.querySelector("link"); if(ln)link=(ln.textContent||"").trim();
+        var enc=it.querySelector("enclosure"); if(!link&&enc)link=enc.getAttribute("url")||"";
+        return {guid:guid,title:title,show:feed.id,cls:feed.cls,date:get("pubDate"),
+                ts:Date.parse(get("pubDate"))||0,suggestedLevel:guessLevel(desc),link:link};
+      });
+    }
+    function fetchFeed(feed){
+      return fetch(PROXY+encodeURIComponent(feed.url)).then(function(r){
+        if(!r.ok) throw new Error(feed.label+" "+r.status); return r.text();
+      }).then(function(x){return parseFeed(x,feed);});
+    }
+    function loadAll(force){
+      var cached=load(CACHE_KEY,null);
+      if(cached&&!force){episodes=cached;render();return;}
+      listEl.innerHTML='<div class="ll-state"><div class="ll-spin"></div>Fetching episode lists…</div>';
+      Promise.all(FEEDS.map(function(f){return fetchFeed(f).then(function(v){return {ok:true,v:v};},function(){return {ok:false,label:f.label};});}))
+      .then(function(results){
+        var merged=[],errs=[];
+        results.forEach(function(r){if(r.ok)merged=merged.concat(r.v);else errs.push(r.label);});
+        if(!merged.length){
+          listEl.innerHTML='<div class="ll-state"><p class="ll-err">Couldn\\'t load any feeds.</p>'+
+            '<p>The CORS proxy may be down. <button class="ll-btn" id="llRetry">Try again</button></p></div>';
+          var rt=document.querySelector("#llRetry"); if(rt)rt.addEventListener("click",function(){loadAll(true);});
+          return;
+        }
+        merged.sort(function(a,b){return b.ts-a.ts;});
+        episodes=merged; save(CACHE_KEY,episodes); render(errs);
+      });
+    }
+    function filtered(){
+      var term=document.querySelector("#llSearch").value.trim().toLowerCase();
+      var status=document.querySelector("#llStatus").value;
+      var list=episodes.filter(function(e){
+        if(activeShow!=="all"&&e.show!==activeShow)return false;
+        var u=userState[e.guid]||{};
+        if(status==="heard"&&!u.heard)return false;
+        if(status==="unheard"&&u.heard)return false;
+        if(term){var hay=(e.title+" "+(u.tags||"")+" "+(u.level||"")).toLowerCase();if(hay.indexOf(term)<0)return false;}
+        return true;
+      });
+      list.sort(function(a,b){return document.querySelector("#llSort").value==="oldest"?a.ts-b.ts:b.ts-a.ts;});
+      return list;
+    }
+    function rowHTML(e){
+      var u=userState[e.guid]||{}; var lvl=u.level||e.suggestedLevel||"";
+      var sug=(!u.level&&e.suggestedLevel)?' <span title="suggested from feed">'+e.suggestedLevel+'</span>':"";
+      var opts=["","N5","N4-","N4","N3","N2+"].map(function(o){return '<option value="'+o+'" '+(o===lvl?"selected":"")+'>'+(o||"level…")+'</option>';}).join("");
+      return '<div class="ll-ep '+(u.heard?"heard":"")+'" data-guid="'+esc(e.guid)+'">'+
+        '<label class="ll-chk"><input type="checkbox" class="llc" '+(u.heard?"checked":"")+'></label>'+
+        '<div class="ll-main"><div class="ll-title"><span class="ll-tag '+e.cls+'">'+(e.show==="teppei"?"Teppei":"Picnic")+'</span>'+esc(e.title)+sug+'</div>'+
+        '<div class="ll-meta">'+(e.date?new Date(e.ts).toLocaleDateString():"")+
+          (e.link?' · <a class="ll-link" href="'+esc(e.link)+'" target="_blank" rel="noopener">listen ↗</a>':"")+
+          (u.tags?' · 🏷 '+esc(u.tags):"")+'</div>'+
+        '<button class="ll-toggle">'+(u.level||u.tags?"edit level / tags":"add level / tags")+'</button>'+
+        '<div class="ll-extra"><select class="lll">'+opts+'</select>'+
+        '<input type="text" class="llt" placeholder="topic / free-text tags…" value="'+esc(u.tags||"")+'"></div></div></div>';
+    }
+    function setState(guid,patch){userState[guid]=Object.assign({},userState[guid],patch);save(STATE_KEY,userState);}
+    function render(errs){
+      var list=filtered();
+      var heard=episodes.filter(function(e){return userState[e.guid]&&userState[e.guid].heard;}).length;
+      document.querySelector("#llStats").innerHTML='Showing <b>'+Math.min(shown,list.length)+'</b> of <b>'+list.length+'</b> matches · <b>'+heard+'</b> / '+episodes.length+' heard overall';
+      if(!list.length){listEl.innerHTML='<div class="ll-state">No episodes match your filters.</div>';document.querySelector("#llMoreWrap").style.display="none";return;}
+      listEl.innerHTML=list.slice(0,shown).map(rowHTML).join("");
+      document.querySelector("#llMoreWrap").style.display=list.length>shown?"block":"none";
+      if(errs&&errs.length)listEl.insertAdjacentHTML("afterbegin",'<div class="ll-state ll-err" style="padding:.75rem;">Note: couldn\\'t load '+errs.join(" & ")+' this time.</div>');
+      bindRows();
+    }
+    function bindRows(){
+      [].slice.call(listEl.querySelectorAll(".ll-ep")).forEach(function(rowx){
+        var guid=rowx.getAttribute("data-guid");
+        rowx.querySelector(".llc").addEventListener("change",function(ev){setState(guid,{heard:ev.target.checked});rowx.classList.toggle("heard",ev.target.checked);render();});
+        rowx.querySelector(".ll-toggle").addEventListener("click",function(){rowx.classList.toggle("open");});
+        rowx.querySelector(".lll").addEventListener("change",function(ev){setState(guid,{level:ev.target.value});});
+        var tg=rowx.querySelector(".llt");
+        tg.addEventListener("input",function(){setState(guid,{tags:tg.value});});
+      });
+    }
+
+    var deb;
+    document.querySelector("#llSearch").addEventListener("input",function(){clearTimeout(deb);deb=setTimeout(function(){shown=PAGE;render();},150);});
+    document.querySelector("#llStatus").addEventListener("change",function(){shown=PAGE;render();});
+    document.querySelector("#llSort").addEventListener("change",function(){shown=PAGE;render();});
+    document.querySelector("#llChips").addEventListener("click",function(e){var c=e.target.closest(".ll-chip");if(!c)return;
+      [].slice.call(document.querySelectorAll(".ll-chip")).forEach(function(x){x.classList.remove("active");});
+      c.classList.add("active");activeShow=c.getAttribute("data-show");shown=PAGE;render();});
+    document.querySelector("#llMore").addEventListener("click",function(){shown+=PAGE;render();});
+    document.querySelector("#llRefresh").addEventListener("click",function(e){e.preventDefault();shown=PAGE;loadAll(true);});
+    document.querySelector("#llClear").addEventListener("click",function(e){e.preventDefault();
+      if(confirm("Clear cached episode list? Your heard/notes data is kept. Feeds will reload.")){localStorage.removeItem(CACHE_KEY);shown=PAGE;loadAll(true);}});
+
+    loadAll(false);
+  `
+}
 ];
 const tabs = document.querySelectorAll('.tab');
 const ready = [false, false, false, false];
 const shadows = [null, null, null, null];
 const WK_TOKEN_KEY = 'nikki_wk_token';
 const WK_LEVEL_KEY = 'nikki_wk_level';
-let currentLevel = parseInt(localStorage.getItem(WK_LEVEL_KEY)) || 11;
+let currentLevel = parseInt(localStorage.getItem(WK_LEVEL_KEY)) || 9;
 const weekSchedule = [
   [1, [2026,4,27]],
   [2, [2026,5,4]],
