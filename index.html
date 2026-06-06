@@ -252,7 +252,7 @@ const docs = [
 
     function load(k,fb){try{var v=JSON.parse(localStorage.getItem(k));return v==null?fb:v;}catch(e){return fb;}}
     function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-    function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+    function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c];});}
     function guessLevel(d){
       if(!d) return "";
       var hits=["🚲","🚃","🚀"].filter(function(e){return d.indexOf(e)>-1;});
@@ -286,7 +286,7 @@ const docs = [
         var merged=[],errs=[];
         results.forEach(function(r){if(r.ok)merged=merged.concat(r.v);else errs.push(r.label);});
         if(!merged.length){
-          listEl.innerHTML='<div class="ll-state"><p class="ll-err">Couldn\'t load any feeds.</p>'+
+          listEl.innerHTML='<div class="ll-state"><p class="ll-err">Couldn\\'t load any feeds.</p>'+
             '<p>The CORS proxy may be down. <button class="ll-btn" id="llRetry">Try again</button></p></div>';
           var rt=document.querySelector("#llRetry"); if(rt)rt.addEventListener("click",function(){loadAll(true);});
           return;
@@ -332,7 +332,7 @@ const docs = [
       if(!list.length){listEl.innerHTML='<div class="ll-state">No episodes match your filters.</div>';document.querySelector("#llMoreWrap").style.display="none";return;}
       listEl.innerHTML=list.slice(0,shown).map(rowHTML).join("");
       document.querySelector("#llMoreWrap").style.display=list.length>shown?"block":"none";
-      if(errs&&errs.length)listEl.insertAdjacentHTML("afterbegin",'<div class="ll-state ll-err" style="padding:.75rem;">Note: couldn\'t load '+errs.join(" & ")+' this time.</div>');
+      if(errs&&errs.length)listEl.insertAdjacentHTML("afterbegin",'<div class="ll-state ll-err" style="padding:.75rem;">Note: couldn\\'t load '+errs.join(" & ")+' this time.</div>');
     }
 
     // Delegated listeners — bound once on the stable parent, survive list re-renders.
